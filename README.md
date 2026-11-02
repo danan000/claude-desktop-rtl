@@ -113,9 +113,21 @@ The tool builds a patched copy, tests it, and only then swaps it in for your app
 - **Anthropic's terms.** Changing software can conflict with its terms of use. This tool changes a copy on your own Mac and ships none of Anthropic's code, but whether that is allowed is your call, not mine.
 - **Read it.** `payload.js` runs in the page, `main-snippet.js` runs in the app, and `rtl.py` builds the copy. All three are short. [How it works](docs/how-it-works.md) explains the integrity check and why the build needs two edits.
 
+## Windows
+
+Not supported yet. The Windows app keeps its integrity data in a different place, and I have not seen a Windows install of Claude. If you use Windows, you can help. Run the probe. It only reads files and runs read-only Windows commands:
+
+```
+git clone https://github.com/danan000/claude-desktop-rtl.git
+cd claude-desktop-rtl
+py -3 probe_windows.py
+```
+
+The probe makes no change and uses no network. It writes `claude-rtl-probe.txt` in the same folder, with your user name replaced by `<user>`. Open an issue and paste the file.
+
 ## Limits
 
-- macOS only.
+- macOS only for now. See [Windows](#windows).
 - Tested on Claude 4.4212.0 (Electron 44.9.3) on Apple Silicon. Intel is untested.
 - I have not tested a real Claude update on a patched app. The patched app is signed ad hoc, so Claude's updater may refuse an update. If it does, download Claude again from claude.ai/download and run `python3 rtl.py repair`.
 - The swap, the restore and the repair logic have tests. I ran an in-place install on my own Mac and on a throwaway copy of the app, and an uninstall on the copy. Nobody has yet run `/rtl install yes`, the repair job after a real update, or an install on a second Mac.
