@@ -437,3 +437,19 @@ class StatusTests(unittest.TestCase):
         line = out.call_args[0][0]
         self.assertIn('update', line)
         self.assertIn('repair', line)
+
+
+class ReinstallTests(unittest.TestCase):
+    def test_a_second_in_place_install_changes_nothing_and_keeps_the_original(self):
+        with mock.patch.object(rtl, 'is_patched', return_value=True), \
+                mock.patch.object(rtl, 'install') as build, \
+                mock.patch.object(rtl, 'swap_in') as swap, \
+                mock.patch('builtins.print'):
+            rtl.install_in_place(Path('/Applications/Claude.app'), Path('/x/Claude-RTL.app'), Path('/s.json'))
+        build.assert_not_called()
+        swap.assert_not_called()
+
+    def test_patched_main_refuses_a_file_that_is_already_patched(self):
+        once = rtl.patched_main(b'"use strict";var a=1', 'SNIPPET claude-rtl-menu')
+        with self.assertRaises(ValueError):
+            rtl.patched_main(once, 'SNIPPET claude-rtl-menu')

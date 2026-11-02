@@ -152,6 +152,8 @@ def make_snippet(folder, state):
 def patched_main(original, snippet):
     if not original.startswith(DIRECTIVE):
         raise ValueError('the app main file no longer starts with "use strict"; this build needs a new look')
+    if b'claude-rtl-menu' in original:
+        raise ValueError('the app is already patched; build from the original, not from a patched app')
     return DIRECTIVE + snippet.encode() + original[len(DIRECTIVE):]
 
 
@@ -441,6 +443,10 @@ def agent_off():
 
 
 def install_in_place(src, dest, state):
+    # A second install must not save the patched app as the "original".
+    if is_patched(src):
+        print(f'{src} is already patched. Nothing to build.')
+        return
     install(src, dest, state, force=True, announce=False)
     swap_in(src, dest, BACKUP)
     FAILED.unlink(missing_ok=True)
