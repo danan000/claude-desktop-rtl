@@ -1,0 +1,11 @@
+{
+  "name": "rtl-hebrew",
+  "owner": { "name": "danan000" },
+  "plugins": [
+    {
+      "name": "rtl-hebrew",
+      "source": "./",
+      "description": "Right-to-left Hebrew and Arabic in the Claude desktop app, installed and repaired from inside Claude with /rtl."
+    }
+  ]
+}
