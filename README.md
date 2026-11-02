@@ -73,7 +73,7 @@ Claude's reply now sits on the right. The English words keep their order. With t
 
 ## After Claude updates
 
-With `--in-place`, the background job checks every 10 minutes. After an update it waits until Claude is closed, then patches the new version. Open Claude again and the button is back. The job skips a version that fails the 10 second test, until the next update. Check by hand:
+With `--in-place`, the background job checks every 10 minutes. After an update it waits until Claude is closed, then patches the new version. Open Claude again and the button is back. macOS asks about "Claude Safe Storage" once more: click **Always Allow**. A stable self-signed certificate would not prevent this prompt, because macOS ties the item to the binary's hash ([how it works](docs/how-it-works.md)). The job skips a version that fails the 10 second test, until the next update. Check by hand:
 
 ```bash
 python3 rtl.py status
@@ -99,6 +99,7 @@ An in-place install puts the saved original back and removes the background job.
 | The icon is missing | The page may have renamed `.epitaxy-titlebar-end`. The Hebrew menu still works. Open an issue with your Claude version. |
 | Hebrew is still on the left | Check that the button is pressed. With a separate copy, check that you opened `Claude-RTL.app`, not the original. |
 | `open` starts the original app | Both apps share one bundle ID. Quit Claude first, then use `open -n`. |
+| macOS asks about "Claude Safe Storage" again | Normal after each Claude update, because the repair builds a new binary. Click **Always Allow**. Never click Deny, and never delete that Keychain item: it holds the key to your Claude login. |
 | The install stops with a list of problems | Fix each line it names and run it again. |
 | `python3 rtl.py smoke` fails | It prints the FATAL line. The most likely cause is a Claude version that changed its integrity check. Open an issue. |
 

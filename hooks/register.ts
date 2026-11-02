@@ -14,7 +14,7 @@ export const register: Register = on => {
     if (!(await $.session.surfaces()).includes('desktop')) return next(e)
     await $.command.register({ name: 'rtl', description: 'Hebrew right-to-left: status, /rtl install' })
     if (!(await status($)).patched) {
-      $.ui.toast('Hebrew right-to-left is not active in this Claude. Type /rtl to set it up.')
+      $.ui.toast('Hebrew right-to-left is off, maybe after a Claude update. Type /rtl to fix it.')
     }
     return next(e)
   })

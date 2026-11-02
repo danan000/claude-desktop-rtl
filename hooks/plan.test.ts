@@ -28,3 +28,9 @@ test('an app that is already patched is left alone', () => {
 test('extra spaces around the argument do not matter', () => {
   expect(plan('  install yes ', false, 'x').run).toBe(true)
 })
+
+test('install yes tells the user to click Always Allow, never Deny', () => {
+  const t = plan('install yes', false, 'x').text
+  expect(t).toContain('Always Allow')
+  expect(t).toContain('Deny')
+})

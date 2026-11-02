@@ -7,7 +7,11 @@ export function plan(args: string, patched: boolean, line: string): Plan {
   if (a === 'install' || a === 'install yes') {
     if (patched) return { text: `Already active. ${line}`, run: false }
     if (a === 'install yes') {
-      return { text: 'Claude closes in about 25 seconds, then opens again with the patch (about 2 minutes).', run: true }
+      return {
+        text:
+          'Claude closes in about 25 seconds, then opens again with the patch (about 2 minutes). macOS then asks about "Claude Safe Storage": click Always Allow. Never click Deny.',
+        run: true,
+      }
     }
     return {
       text:

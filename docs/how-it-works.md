@@ -87,3 +87,9 @@ A launch agent, `com.danan000.claude-rtl`, runs `rtl.py repair` at login and eve
 `install --in-place --relaunch` starts a one-shot launchd job that closes Claude, installs and opens Claude again. The job lives outside Claude, so it survives the quit. The plugin's `/rtl install yes` runs this command.
 
 The plugin (`hooks/`) is a Claude Code mod. It calls `rtl.py` and nothing else. The mod API cannot draw right-to-left text or add a title-bar button on the desktop, so the patch stays the part that does the work.
+
+## Why the Keychain asks again after each update
+
+Claude keeps the key to its login data in a Keychain item, "Claude Safe Storage". macOS lets an app read that item only when the app's "partition" is on the item's list. For an app signed by Anthropic the partition is `teamid:Q6L2SF6YDW`. For an app signed ad hoc, or with a self-signed certificate, the partition is `cdhash:<hash of the binary>` (Apple's `securityd`, `clientid.cpp`, `partitionIdForProcess`). The check is a plain string match (`acls.cpp`, `validatePartition`).
+
+Each repair builds a new binary with a new hash, so macOS asks once. "Always Allow" adds the new hash to the list and keeps the key. A stable self-signed certificate would not help: its partition is still the binary hash. Only an Apple-issued certificate gives a stable `teamid:` partition. An independent report found the same on four machines: [hermes-agent issue 91115](https://github.com/NousResearch/hermes-agent/issues/91115).

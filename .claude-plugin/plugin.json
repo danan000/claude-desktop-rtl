@@ -2,7 +2,8 @@
   "name": "rtl-hebrew",
   "version": "0.1.0",
   "description": "Right-to-left Hebrew and Arabic in the Claude desktop app. Installs and repairs the patch from inside Claude with /rtl.",
-  "author": { "name": "danan000" },
+  "author": { "name": "danan000", "url": "https://github.com/danan000" },
+  "repository": "https://github.com/danan000/claude-desktop-rtl",
   "license": "MIT",
   "homepage": "https://github.com/danan000/claude-desktop-rtl"
 }

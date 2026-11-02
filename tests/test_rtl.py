@@ -423,3 +423,17 @@ class RelaunchTests(unittest.TestCase):
         text = rtl.relaunch_script(Path('/t/rtl.py'), Path('/s.json'), Path('/l/log'))
         self.assertLess(text.index('install --in-place'), text.index('open /Applications/Claude.app'))
         self.assertNotIn('set -e', text)
+
+
+class StatusTests(unittest.TestCase):
+    def test_after_an_update_status_names_the_update_and_the_repair(self):
+        with tempfile.TemporaryDirectory() as tmp, \
+                mock.patch.object(rtl, 'is_patched', return_value=False), \
+                mock.patch.object(rtl, 'version', return_value='9.9'), \
+                mock.patch.object(rtl, 'BACKUP', Path(tmp)), \
+                mock.patch('builtins.print') as out:
+            code = rtl.status('src', Path(tmp) / 'no-copy')
+        self.assertEqual(code, 1)
+        line = out.call_args[0][0]
+        self.assertIn('update', line)
+        self.assertIn('repair', line)

@@ -323,6 +323,10 @@ def status(src, dest):
     if is_patched(src):
         print(f'Claude {version(src)}: patched in place')
         return 0
+    if Path(BACKUP).exists():
+        print(f'Claude {version(src)}: not patched. A Claude update removed the patch. '
+              'Run: python3 rtl.py repair (or /rtl install yes)')
+        return 1
     if not Path(dest).exists():
         print('no copy yet; run: python3 rtl.py install')
         return 1
