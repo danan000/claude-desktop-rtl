@@ -2,6 +2,8 @@
 
 Right-to-left Hebrew and Arabic for the Claude desktop app on macOS.
 
+![A click on the RTL button: the Hebrew moves to the left and scrambles, a second click puts it back on the right](docs/demo.gif)
+
 ![The RTL button in the Claude desktop title bar](docs/button.png)
 
 In the Code tab, a Hebrew message with English words in it comes out scrambled, and Hebrew lines sit on the left. This tool patches the app so each paragraph gets its own text direction. It adds an icon button to the title bar and a Hebrew menu to turn it on and off. It keeps your original app, so you can undo it.
