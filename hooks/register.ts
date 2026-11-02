@@ -23,7 +23,8 @@ export const register: Register = on => {
     const s = await status($)
     const p = plan(e.args, s.patched, s.line)
     if (p.run) {
-      await $.process.run([PYTHON, `${$.plugin.root}/rtl.py`, 'install', '--in-place', '--relaunch'], { timeoutMs: 60000 })
+      const args = p.run === 'install' ? ['install', '--in-place', '--relaunch'] : ['uninstall', '--relaunch']
+      await $.process.run([PYTHON, `${$.plugin.root}/rtl.py`, ...args], { timeoutMs: 60000 })
     }
     return { text: p.text }
   })

@@ -453,3 +453,11 @@ class ReinstallTests(unittest.TestCase):
         once = rtl.patched_main(b'"use strict";var a=1', 'SNIPPET claude-rtl-menu')
         with self.assertRaises(ValueError):
             rtl.patched_main(once, 'SNIPPET claude-rtl-menu')
+
+
+class UninstallRelaunchTests(unittest.TestCase):
+    def test_the_uninstall_job_runs_uninstall_and_opens_claude(self):
+        text = rtl.relaunch_script(Path('/t/rtl.py'), Path('/s.json'), Path('/l/log'), action='uninstall')
+        self.assertIn("/t/rtl.py uninstall", text)
+        self.assertNotIn('install --in-place', text)
+        self.assertLess(text.index('uninstall'), text.index('open /Applications/Claude.app'))

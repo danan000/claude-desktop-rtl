@@ -66,6 +66,7 @@ Claude's reply now sits on the right. The English words keep their order. With t
 |---|---|
 | `/rtl` | Shows whether the patch is active |
 | `/rtl install yes` | Closes Claude, patches it and opens it again (about 2 minutes) |
+| `/rtl uninstall yes` | Closes Claude, puts your original app back and opens it again |
 | `python3 rtl.py status` | Same as `/rtl`, from Terminal |
 | `python3 rtl.py install --in-place` | Patches `/Applications/Claude.app` (Claude must be closed) |
 | `python3 rtl.py repair` | Puts the patch back after a Claude update |
@@ -84,7 +85,9 @@ With the separate copy, Claude updates `/Applications/Claude.app` and leaves the
 
 ## Uninstall
 
-Quit Claude, then run:
+From inside Claude, type `/rtl uninstall yes`, then remove the plugin with `/plugin uninstall rtl-hebrew`.
+
+From Terminal, quit Claude, then run:
 
 ```bash
 python3 rtl.py uninstall

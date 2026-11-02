@@ -388,9 +388,11 @@ def stage_tool(dest=TOOL):
     return dest / 'rtl.py'
 
 
-def relaunch_script(script, state, log, delay=25):
+def relaunch_script(script, state, log, delay=25, action='install'):
     q = shlex.quote
     py, quit_after = sys.executable, 45
+    step = (f'{q(py)} {q(str(script))} install --in-place --state-file {q(str(state))}' if action == 'install'
+            else f'{q(py)} {q(str(script))} uninstall')
     return f'''#!/bin/bash
 # One-shot: quit Claude, patch it in place, open it again. Started by launchd so it outlives Claude.
 exec > {q(str(log))} 2>&1
@@ -404,8 +406,8 @@ if [ -n "$(apps)" ]; then
   for p in $(apps); do kill -KILL "$p"; done
   sleep 3
 fi
-{q(py)} {q(str(script))} install --in-place --state-file {q(str(state))}
-echo "install exit $?"
+{step}
+echo "{action} exit $?"
 sleep 2
 open /Applications/Claude.app
 echo "open exit $?"
@@ -414,11 +416,11 @@ echo "done $(date '+%F %T')"
 '''
 
 
-def relaunch(state):
-    """Patch the app while it runs: a job outside Claude closes it, installs and opens it again."""
+def relaunch(state, action='install'):
+    """Install or uninstall while Claude runs: a job outside Claude closes it, does the work, opens it again."""
     tool = stage_tool()
     sh = KEEP / 'relaunch.sh'
-    sh.write_text(relaunch_script(tool, state, LOG))
+    sh.write_text(relaunch_script(tool, state, LOG, action=action))
     sh.chmod(0o755)
     plist = KEEP / f'{ONCE}.plist'
     plist.write_bytes(plistlib.dumps({'Label': ONCE, 'RunAtLoad': True, 'ProgramArguments': ['/bin/bash', str(sh)],
@@ -426,7 +428,8 @@ def relaunch(state):
     target = f'gui/{os.getuid()}'
     subprocess.run(['launchctl', 'bootout', f'{target}/{ONCE}'], capture_output=True)
     run(['launchctl', 'bootstrap', target, plist])
-    print(f'Claude closes in about 25 seconds, then opens again with the patch (about 2 minutes). Log: {LOG}')
+    after = 'with the patch (about 2 minutes)' if action == 'install' else 'as the original app'
+    print(f'Claude closes in about 25 seconds, then opens again {after}. Log: {LOG}')
 
 
 def agent_on(state):
@@ -475,7 +478,7 @@ def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument('cmd', choices=['install', 'update', 'repair', 'status', 'smoke', 'uninstall'])
     p.add_argument('--relaunch', action='store_true',
-                   help='with --in-place: close Claude, patch it and open it again, even when it runs now')
+                   help='with install --in-place or uninstall: close Claude, do the work and open it again, even when it runs now')
     p.add_argument('--in-place', action='store_true',
                    help='patch /Applications/Claude.app itself, keep the original, and put the patch back after each Claude update')
     p.add_argument('--src', default=SRC, type=Path, help='the original app (default /Applications/Claude.app)')
@@ -498,6 +501,8 @@ def main():
         ok, detail = smoke(a.dest)
         print(('ok: ' if ok else 'FAILED: ') + detail)
         sys.exit(0 if ok else 1)
+    elif a.relaunch:
+        relaunch(state_path(a.state_file), 'uninstall')
     elif BACKUP.exists():
         swap_out(a.src, BACKUP)
         agent_off()
