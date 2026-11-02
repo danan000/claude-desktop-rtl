@@ -66,3 +66,20 @@ class ReportTests(unittest.TestCase):
     def test_a_report_of_a_missing_folder_says_so_and_does_not_raise(self):
         text = probe.report_for_app(Path('/no/such/claude/app'))
         self.assertIn('not found', text)
+
+
+class PowerShellTests(unittest.TestCase):
+    def test_a_path_never_enters_the_command_text(self):
+        from unittest import mock
+        evil = "C:\\O'Brien'; Remove-Item x; '\\Claude.exe"
+        seen = {}
+
+        def fake_run(argv, **kw):
+            seen['argv'], seen['env'] = argv, kw.get('env') or {}
+            return mock.Mock(stdout='ok', stderr='')
+
+        with mock.patch.object(probe.subprocess, 'run', side_effect=fake_run):
+            probe.ps(probe.SIG_CMD, evil)
+        self.assertFalse(any(evil in part or 'Remove-Item' in part for part in seen['argv']))
+        self.assertEqual(seen['env']['RTL_PROBE_PATH'], evil)
+        self.assertIn('$env:RTL_PROBE_PATH', seen['argv'][-1])

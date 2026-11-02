@@ -53,11 +53,18 @@ def read_fuses(data):
             'states': {name: STATE.get(b, '?') for name, b in zip(names, wire)}}
 
 
-def ps(command):
+# A path never goes into command text: it travels in an environment variable, so a
+# quote or a semicolon in a folder name cannot change the command.
+SIG_CMD = "(Get-AuthenticodeSignature -LiteralPath $env:RTL_PROBE_PATH) | Select-Object Status,@{n='Signer';e={$_.SignerCertificate.Subject}} | ConvertTo-Json -Compress"
+VER_CMD = '(Get-Item -LiteralPath $env:RTL_PROBE_PATH).VersionInfo.ProductVersion'
+
+
+def ps(command, path=None):
     """One read-only PowerShell command. The output, or the error as text."""
+    env = dict(os.environ, RTL_PROBE_PATH=str(path)) if path is not None else None
     try:
         r = subprocess.run(['powershell', '-NoProfile', '-NonInteractive', '-Command', command],
-                           capture_output=True, text=True, timeout=60)
+                           capture_output=True, text=True, timeout=60, env=env)
         return (r.stdout or r.stderr).strip()
     except Exception as e:  # a probe reports a failure, it never stops on one
         return f'could not run: {e}'
@@ -135,9 +142,8 @@ def report_for_app(app):
                                                                        'utf16': data.count('ElectronAsar'.encode('utf-16-le'))}))
             lines.append(f'digest sentinel (second integrity layer) in the exe: {data.count(b"AGbevlPCksUGKNL8TSn7wGmJEuJsXb2A")}')
         if sys.platform == 'win32':
-            sig = ps(f"(Get-AuthenticodeSignature -LiteralPath '{exe}') | Select-Object Status,@{{n='Signer';e={{$_.SignerCertificate.Subject}}}} | ConvertTo-Json -Compress")
-            lines.append(f'authenticode: {sig}')
-            lines.append('product version: ' + ps(f"(Get-Item -LiteralPath '{exe}').VersionInfo.ProductVersion"))
+            lines.append(f'authenticode: {ps(SIG_CMD, exe)}')
+            lines.append('product version: ' + ps(VER_CMD, exe))
     return '\n'.join(lines)
 
 
