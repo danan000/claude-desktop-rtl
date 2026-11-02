@@ -1,0 +1,62 @@
+name: Test report
+description: Tell us how the install went on your machine.
+title: "Test report: "
+labels: ["test-report"]
+body:
+  - type: input
+    id: claude
+    attributes:
+      label: Claude version
+      description: Claude menu, then About.
+      placeholder: "4.4212.0"
+    validations:
+      required: true
+  - type: dropdown
+    id: machine
+    attributes:
+      label: Machine
+      options:
+        - Mac, Apple Silicon
+        - Mac, Intel
+        - Windows (probe report)
+    validations:
+      required: true
+  - type: dropdown
+    id: method
+    attributes:
+      label: How you installed
+      options:
+        - Plugin, /rtl install yes
+        - Terminal, python3 rtl.py install --in-place
+        - Windows probe only
+    validations:
+      required: true
+  - type: textarea
+    id: result
+    attributes:
+      label: Install result
+      description: The last lines it printed, or the end of ~/Library/Logs/claude-rtl-install.log. For Windows, paste claude-rtl-probe.txt.
+      render: shell
+    validations:
+      required: true
+  - type: dropdown
+    id: icon
+    attributes:
+      label: Does the RTL icon show in the top-right button row?
+      options:
+        - "Yes"
+        - "No"
+        - Not relevant (Windows)
+  - type: dropdown
+    id: hebrew
+    attributes:
+      label: Does Hebrew sit on the right, with English words in order?
+      options:
+        - "Yes"
+        - "No"
+        - Not relevant (Windows)
+  - type: textarea
+    id: errors
+    attributes:
+      label: Errors
+      description: Any error, with its exact text.

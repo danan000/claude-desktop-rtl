@@ -148,7 +148,7 @@ The tests need Node 20 or newer for the page and app code, and run the build che
 
 ## Help us test
 
-This is an early release. If you try it, please open an issue and tell me:
+This is an early release. If you try it, please open a [test report](https://github.com/danan000/claude-desktop-rtl/issues/new?template=test-report.yml). It asks for:
 
 1. Your Claude version (Claude menu, then About) and your Mac (Apple Silicon or Intel).
 2. If the install finished, and the last lines it printed. The install log is `~/Library/Logs/claude-rtl-install.log`.
