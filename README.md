@@ -146,6 +146,10 @@ python3 -m unittest discover -s tests
 
 The tests need Node 20 or newer for the page and app code, and run the build checks against your installed Claude when there is one. The page code was also checked by hand on the real claude.ai page in Chrome, because a Node test cannot draw it.
 
+The plugin tests run with `claude plugin test .` and `claude plugin validate .`.
+
+For each release, raise `version` in `.claude-plugin/plugin.json`. An installed plugin updates only when that number changes.
+
 ## Help us test
 
 This is an early release. If you try it, please open a [test report](https://github.com/danan000/claude-desktop-rtl/issues/new?template=test-report.yml). It asks for:
