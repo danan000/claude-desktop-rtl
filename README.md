@@ -124,7 +124,7 @@ The tool builds a patched copy, tests it, and only then swaps it in for your app
 ## Develop
 
 ```bash
-node --test tests/
+node --test tests/*.test.js
 python3 -m unittest discover -s tests
 ```
 

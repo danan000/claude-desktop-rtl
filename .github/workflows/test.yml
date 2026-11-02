@@ -19,6 +19,6 @@ jobs:
         with:
           node-version: '22'
       - name: Page and app code
-        run: node --test tests/
+        run: node --test tests/*.test.js
       - name: Build code
         run: python3 -m unittest discover -s tests
